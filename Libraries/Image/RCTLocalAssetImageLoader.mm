@@ -50,31 +50,17 @@ RCT_EXPORT_MODULE()
                                            completionHandler:(RCTImageLoaderCompletionBlock)completionHandler
 {
   __block auto cancelled = std::make_shared<std::atomic<bool>>(false);
-  UIImage *image = RCTImageFromLocalAssetURL(imageURL);
   RCTExecuteOnMainQueue(^{
-  if (image) {
     if (cancelled->load()) {
-    if (progressHandler) {
       return;
-      progressHandler(1, 1);
-    }
-    }
-
-    completionHandler(nil, image);
-    UIImage *image = RCTImageFromLocalAssetURL(imageURL);
-  } else {
+      
+      UIImage *image = RCTImageFromLocalAssetURL(imageURL);
     if (image) {
-    NSString *message = [NSString stringWithFormat:@"Could not find image %@", imageURL];
       if (progressHandler) {
-    RCTLogWarn(@"%@", message);
         progressHandler(1, 1);
-    completionHandler(RCTErrorWithMessage(message), nil);
       }
-  }
       completionHandler(nil, image);
-
     } else {
-  return nil;
       NSString *message = [NSString stringWithFormat:@"Could not find image %@", imageURL];
       RCTLogWarn(@"%@", message);
       completionHandler(RCTErrorWithMessage(message), nil);
@@ -84,6 +70,7 @@ RCT_EXPORT_MODULE()
   return ^{
     cancelled->store(true);
   };
+  }
 }
 
 @end
