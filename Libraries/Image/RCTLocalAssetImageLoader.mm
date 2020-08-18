@@ -41,20 +41,21 @@ RCT_EXPORT_MODULE()
   return NO;
 }
 
- - (nullable RCTImageLoaderCancellationBlock)loadImageForURL:(NSURL *)imageURL
-                                                        size:(CGSize)size
-                                                       scale:(CGFloat)scale
-                                                  resizeMode:(RCTResizeMode)resizeMode
-                                             progressHandler:(RCTImageLoaderProgressBlock)progressHandler
-                                          partialLoadHandler:(RCTImageLoaderPartialLoadBlock)partialLoadHandler
-                                           completionHandler:(RCTImageLoaderCompletionBlock)completionHandler
+ - (RCTImageLoaderCancellationBlock)loadImageForURL:(NSURL *)imageURL
+                                               size:(CGSize)size
+                                              scale:(CGFloat)scale
+                                         resizeMode:(RCTResizeMode)resizeMode
+                                    progressHandler:(RCTImageLoaderProgressBlock)progressHandler
+                                 partialLoadHandler:(RCTImageLoaderPartialLoadBlock)partialLoadHandler
+                                  completionHandler:(RCTImageLoaderCompletionBlock)completionHandler
 {
   __block auto cancelled = std::make_shared<std::atomic<bool>>(false);
   RCTExecuteOnMainQueue(^{
     if (cancelled->load()) {
       return;
-      
-      UIImage *image = RCTImageFromLocalAssetURL(imageURL);
+    }
+
+    UIImage *image = RCTImageFromLocalAssetURL(imageURL);
     if (image) {
       if (progressHandler) {
         progressHandler(1, 1);
@@ -70,7 +71,6 @@ RCT_EXPORT_MODULE()
   return ^{
     cancelled->store(true);
   };
-  }
 }
 
 @end
